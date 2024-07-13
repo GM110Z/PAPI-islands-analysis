@@ -5,3 +5,4 @@ by MMseqs to be used for further analysis
 
 **SPIDERMAN.py** SPIDERMAN (System for Pathway Identification, Data Extraction, and Retrieval with Marvelous ANalysis) uses a tabled outputted from BlastKoala to map KEGG Ids to Kegg pathways and plots the pathways in a piechart
 
+**edison.py** Runs hmmscan vs a PFAM database and processes data to only report hits with e-value <0.01 (and writes them in a tabular format that is better looking that normal pfam)
