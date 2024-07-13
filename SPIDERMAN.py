@@ -62,12 +62,6 @@ df = pd.DataFrame(table_data, columns=['KEGG ID', 'Pathway'])
 csv_file = 'kegg_pathways.csv'
 df.to_csv(csv_file, index=False)
 
-# Count the occurrences of each pathway
-pathway_counts_dict = {pathway: pathway_names.count(pathway) for pathway in set(pathway_names)}
-pathway_names_unique = list(pathway_counts_dict.keys())
-pathway_counts = list(pathway_counts_dict.values())
-# Print the pathways in tabular format
-print(tabulate(table_data, headers=['KEGG ID', 'Pathway'], tablefmt='grid'))
 
 # Count the occurrences of each pathway
 pathway_counts_dict = {pathway: pathway_names.count(pathway) for pathway in set(pathway_names)}
