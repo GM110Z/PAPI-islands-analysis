@@ -6,4 +6,6 @@
 
 **edison.py** = Edison (hiddEn moDel proteIn familieS identificatiON)Runs hmmscan vs a PFAM database and processes data to only report hits with e-value <0.01 (and writes them in a tabular format that is better looking than normal pfam)
 
-**calculate-size.sh** =  runs as calculate-size.sh <list-of-nuccore-IDS>. Uses efetch from entrez and faidx to calculate size in bp
+**calculate-size.sh** =  runs as calculate-size.sh <list-of-nuccore-IDS> Uses efetch from entrez and faidx to calculate size in bp
+
+**plasmid-size-groups.py** = runs as python plasmid-size-groups.py <file_with_sizes>. File with sizes is output from **calculate-size.sh** 
