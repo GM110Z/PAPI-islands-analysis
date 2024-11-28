@@ -8,3 +8,8 @@
 
 
 
+
+Order to run scripts
+
+1)Jarvis
+2)split-Mmseqs-representative-fastas.sh
