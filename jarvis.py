@@ -3,7 +3,7 @@
 
 
 import pandas as pd
-
+import os
 # Load your BLAST data into a DataFrame
 df = pd.read_csv("newpapi.txt", sep="\t", header=None, 
                  names=["query_id", "subject_id", "identity", "alignment_length", 
@@ -75,5 +75,52 @@ regions_df["end"] = regions_df["end"].astype(int)
 # Write the table to a CSV file
 regions_df.to_csv("regions_output_table.csv", index=False)
 
-# Optional: Print the DataFrame to see the output
-print(regions_df)
+
+
+#calculate size and split files by size intervals
+# Path to your input file
+input_file = "regions_output_table.csv"  # Replace with your file path
+output_folder = "grouped_regions"
+os.makedirs(output_folder, exist_ok=True)
+
+# Define size ranges and corresponding file names
+ranges = {
+    "20-40k": (20000, 40000),
+    "41-60k": (41000, 60000),
+    "61-80k": (61000, 80000),
+    "81-200k": (81000, 200000)
+}
+
+# Dictionary to store data for each range
+grouped_data = {key: [] for key in ranges}
+
+# Process the input file
+with open(input_file, "r") as infile:
+    for line in infile:
+        # Skip header if present
+        if line.startswith("Accession") or line.strip() == "":
+            continue
+        
+        # Parse the line
+        accession, start, stop = line.strip().split("\t")
+        start, stop = int(start), int(stop)
+        size = stop - start
+        
+        # Assign the region to the appropriate range
+        for range_name, (min_size, max_size) in ranges.items():
+            if min_size <= size <= max_size:
+                grouped_data[range_name].append((accession, start, stop, size))
+                break
+
+# Write data for each range to separate files
+for range_name, regions in grouped_data.items():
+    output_file = os.path.join(output_folder, f"{range_name}_regions.tsv")
+    with open(output_file, "w") as out:
+        # Write header
+        out.write("Accession\tStart\tStop\tSize\n")
+        # Write regions
+        for region in regions:
+            out.write(f"{region[0]}\t{region[1]}\t{region[2]}\t{region[3]}\n")
+
+print(f"Regions grouped by size and saved in folder: {output_folder}")
+
