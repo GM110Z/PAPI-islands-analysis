@@ -1,11 +1,11 @@
-
 #Filter blast ouput
 
 
 import pandas as pd
 import os
+import csv
 # Load your BLAST data into a DataFrame
-df = pd.read_csv("newpapi.txt", sep="\t", header=None, 
+df = pd.read_csv("tab-sep.txt", sep="\t", header=None, 
                  names=["query_id", "subject_id", "identity", "alignment_length", 
                         "mismatches", "gap_opens", "q_start", "q_end", 
                         "s_start", "s_end", "evalue", "bit_score"])
@@ -94,18 +94,36 @@ ranges = {
 # Dictionary to store data for each range
 grouped_data = {key: [] for key in ranges}
 
+# List to store all region sizes for summary
+all_sizes = []
+
+# Ensure the output folder exists
+output_folder = "grouped_regions"
+os.makedirs(output_folder, exist_ok=True)
+
+# Path to your input file
+input_file = "regions_output_table.csv"  # Replace with your file path
+
 # Process the input file
-with open(input_file, "r") as infile:
-    for line in infile:
-        # Skip header if present
-        if line.startswith("Accession") or line.strip() == "":
+with open(input_file, "r", newline="") as infile:
+    csv_reader = csv.reader(infile)
+    header = next(csv_reader)  # Skip the header row
+
+    for row in csv_reader:
+        if len(row) < 3:  # Skip malformed rows
+            print(f"Skipping malformed row: {row}")
             continue
         
-        # Parse the line
-        accession, start, stop = line.strip().split("\t")
-        start, stop = int(start), int(stop)
-        size = stop - start
-        
+        try:
+            accession = row[0]
+            start = int(row[1])
+            stop = int(row[2])
+            size = stop - start
+            all_sizes.append((accession, start, stop, size))  # Collect all sizes for summary
+        except ValueError:
+            print(f"Skipping row with invalid data: {row}")
+            continue
+
         # Assign the region to the appropriate range
         for range_name, (min_size, max_size) in ranges.items():
             if min_size <= size <= max_size:
@@ -115,12 +133,22 @@ with open(input_file, "r") as infile:
 # Write data for each range to separate files
 for range_name, regions in grouped_data.items():
     output_file = os.path.join(output_folder, f"{range_name}_regions.tsv")
-    with open(output_file, "w") as out:
+    with open(output_file, "w", newline="") as out:
+        tsv_writer = csv.writer(out, delimiter="\t")
         # Write header
-        out.write("Accession\tStart\tStop\tSize\n")
+        tsv_writer.writerow(["Accession", "Start", "Stop", "Size"])
         # Write regions
-        for region in regions:
-            out.write(f"{region[0]}\t{region[1]}\t{region[2]}\t{region[3]}\n")
+        tsv_writer.writerows(regions)
+
+# Write summary file with all sizes
+summary_file = os.path.join(output_folder, "summary_sizes.tsv")
+with open(summary_file, "w", newline="") as summary_out:
+    tsv_writer = csv.writer(summary_out, delimiter="\t")
+    # Write header
+    tsv_writer.writerow(["Accession", "Start", "Stop", "Size"])
+    # Write all regions with their sizes
+    tsv_writer.writerows(all_sizes)
 
 print(f"Regions grouped by size and saved in folder: {output_folder}")
+print(f"Summary of all region sizes saved in: {summary_file}")
 
