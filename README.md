@@ -6,10 +6,11 @@
 
 **edison.py** = Edison (hiddEn moDel proteIn familieS identificatiON)Runs hmmscan vs a PFAM database and processes data to only report hits with e-value <0.01 (and writes them in a tabular format that is better looking than normal pfam)
 
+**Prokkaloop** : Edits headers of fasta files when downloading slices and then runs prokka
 
 
 
 Order to run scripts
 
 1)Jarvis
-2)split-Mmseqs-representative-fastas.sh
+2)Download with parallel efetch and then run prokkaloop
