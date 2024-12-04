@@ -8,10 +8,9 @@
 
 **Prokkaloop** : Edits headers of fasta files when downloading slices and then runs prokka
 **split-Mmseqs-representative-fastas.sh**: After running mmseq to deruplicate, it splits the representative sequence files from multifastas to single fasta that are compatible with prokkaloop script
+**get-gggenes-coordinates**: Needs a tab separated file from MMseqs clustering, and genbank files of interest to be run.  
 
-
-Order to run scripts
-
+Order to run scripts:
 1)Jarvis
 2)split-Mmseqs-representative-fastas.sh
 3)Prokkaloop
