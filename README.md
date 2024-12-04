@@ -7,7 +7,9 @@
 **edison.py** = Edison (hiddEn moDel proteIn familieS identificatiON)Runs hmmscan vs a PFAM database and processes data to only report hits with e-value <0.01 (and writes them in a tabular format that is better looking than normal pfam)
 
 **Prokkaloop** : Edits headers of fasta files when downloading slices and then runs prokka
+
 **split-Mmseqs-representative-fastas.sh**: After running mmseq to deruplicate, it splits the representative sequence files from multifastas to single fasta that are compatible with prokkaloop script
+
 **get-gggenes-coordinates**: Needs a tab separated file from MMseqs clustering, and genbank files of interest to be run.  
 
 Order to run scripts:
