@@ -14,7 +14,7 @@
 
 **SantasHelper.py** Combines PHORIFIC output with PADLOC, AMRFInder and Antidefensefinder
 
-Order to run scripts:
-1)Jarvis
-2)split-Mmseqs-representative-fastas.sh
-3)Prokkaloop
+**Clip.py** Combines Probe and Jarvis outputs to ensure that probe only picks regions included in Jarvis output
+
+**Probe.py** uses hmm models to find co-localised genes. 
+
