@@ -10,7 +10,7 @@
 
 **split-Mmseqs-representative-fastas.sh**: After running mmseq to deruplicate, it splits the representative sequence files from multifastas to single fasta that are compatible with prokkaloop script
 
-**get-gggenes-coordinates**: Needs a tab separated file from MMseqs clustering, and genbank files of interest to be run.  
+**PHORIFIC.py**: Needs a tab separated file from MMseqs clustering, and genbank files of interest to be run.  
 
 Order to run scripts:
 1)Jarvis
