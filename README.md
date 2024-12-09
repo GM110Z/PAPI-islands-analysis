@@ -12,6 +12,8 @@
 
 **PHORIFIC.py**: Needs a tab separated file from MMseqs clustering, and genbank files of interest to be run.  
 
+**SantasHelper.py** Combines PHORIFIC output with PADLOC, AMRFInder and Antidefensefinder
+
 Order to run scripts:
 1)Jarvis
 2)split-Mmseqs-representative-fastas.sh
