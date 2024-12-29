@@ -18,3 +18,4 @@
 
 **Probe.py** uses hmm models to find co-localised genes. 
 
+**fasta-header-extarctor.sh** From a multifasta file produced by mmseqs, it extracts nuccore IDs and coordinates from headers of representative seq file for further analysis
