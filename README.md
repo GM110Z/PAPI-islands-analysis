@@ -23,3 +23,5 @@
 **representative.hotspot.selection.py**: To use with bigger dataset. Starts from a list of nuccore ID you can get from padloc or defense finder. The it compares it with the whole blast output of Jarvis to select representative genomes that have defense systems and can be used to analyse to locate hotspot boundaries
 
 **heatmap-plots.py**: For those islands with multiple hotspots, produces a presence/absence matrix of each hotspot for each nuccore ID (clustered as a dendrogram based on hotspot presence/absence) 
+
+**detective.py 	DETECT Ice oVErlap** : It compares files with jarvis coordinates for each pathogenicity islands and detects for overlap. It produces a table for coordinates and size of overlap and a scatter plot to summarise this
