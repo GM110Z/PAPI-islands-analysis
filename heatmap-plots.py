@@ -50,7 +50,7 @@ fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(14, 6), gridspec_kw={'width_ratios
 # Plot the heatmap
 sns.heatmap(presence_absence, cmap=cmap, cbar_kws={"label": "Presence (1) / Absence (0)"},
             annot=False, fmt="d", linewidths=0, linecolor='none', 
-            yticklabels=False, xticklabels=False, ax=ax1)
+            yticklabels=True, xticklabels=hotspots, ax=ax1)
 
 # Plot the dendrogram using the same linkage matrix
 dendrogram_info = dendrogram(
@@ -63,9 +63,7 @@ dendrogram_info = dendrogram(
 
 # Remove grid, labels, and borders from both axes
 ax1.grid(False)  # Remove the grid from the heatmap
-ax1.set_xticklabels([])  # Remove x-axis labels from heatmap
 ax1.set_yticklabels([])  # Remove y-axis labels from heatmap
-ax1.set_xticks([])  # Remove x-ticks
 ax1.set_yticks([])  # Remove y-ticks
 ax2.grid(False)  # Remove the grid from the dendrogram
 ax2.set_xticklabels([])  # Remove x-axis labels from dendrogram
@@ -77,7 +75,7 @@ ax2.set_yticks([])  # Remove y-ticks from dendrogram
 ax1.set_title("Hotspot Presence/Absence Heatmap", fontsize=14)
 ax2.set_title("Nuccore Dendrogram", fontsize=14)
 
-# Save the side-by-side plot as PNG
+# Save the side-by-side plot as PDF
 plt.tight_layout(pad=0)
 plt.savefig("heatmap_and_dendrogram_side_by_side.pdf", dpi=300)
 plt.show()
