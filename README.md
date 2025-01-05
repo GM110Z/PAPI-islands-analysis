@@ -19,3 +19,7 @@
 **Probe.py** uses hmm models to find co-localised genes. 
 
 **fasta-header-extarctor.sh** From a multifasta file produced by mmseqs, it extracts nuccore IDs and coordinates from headers of representative seq file for further analysis
+
+**representative.hotspot.selection.py**: To use with bigger dataset. Starts from a list of nuccore ID you can get from padloc or defense finder. The it compares it with the whole blast output of Jarvis to select representative genomes that have defense systems and can be used to analyse to locate hotspot boundaries
+
+**heatmap-plots.py**: For those islands with multiple hotspots, produces a presence/absence matrix of each hotspot for each nuccore ID (clustered as a dendrogram based on hotspot presence/absence) 
