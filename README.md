@@ -25,3 +25,5 @@
 **heatmap-plots.py**: For those islands with multiple hotspots, produces a presence/absence matrix of each hotspot for each nuccore ID (clustered as a dendrogram based on hotspot presence/absence) 
 
 **detective.py 	DETECT Ice oVErlap** : It compares files with jarvis coordinates for each pathogenicity islands and detects for overlap. It produces a table for coordinates and size of overlap and a scatter plot to summarise this
+
+**viper.py  – Virulence Identification and Protein Elimination via Refinement**: It needs a protein file, ideally produced through Mmseqs2 dereplication. It also needs the MMseqs2 table. WIll run PSI-BLAST using the representative proteins vs a database of your choice (at the moment this is a work in progress and it runs VFDB)--At the moment it runs as a Jupyter labook (or your need to manually change the key stuff). 
