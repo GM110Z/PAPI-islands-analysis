@@ -118,8 +118,8 @@ def process_combined_proteome(proteome_file, output_dir, mmseqs_file, num_thread
 
 # Example usage
 if __name__ == "__main__":
-    proteome_file = "clusterRes_rep_seq.fasta"  # Path to the combined proteome file
-    output_dir = "psiblast_results"  # Directory to store PSI-BLAST results
-    mmseqs_file = "clusterRes_cluster.tsv"  # Path to the MMseqs cluster file
+    proteome_file = sys.argv[1] # Path to the combined proteome file
+    output_dir =  sys.argv[2] # Directory to store PSI-BLAST results
+    mmseqs_file =  sys.argv[3] # Path to the MMseqs cluster file
 
     process_combined_proteome(proteome_file, output_dir, mmseqs_file, num_threads=8)
