@@ -4,6 +4,7 @@ import subprocess
 import pandas as pd
 from Bio import SeqIO
 import time
+import sys
 
 # Step 1: MMseqs Clustering - Assign Numeric Cluster IDs
 def load_clustering_table(file_path):
@@ -96,7 +97,7 @@ def process_combined_proteome(proteome_file, output_dir, mmseqs_file, num_thread
 
     base_name = os.path.basename(proteome_file).split(".")[0]
     psiblast_output = os.path.join(output_dir, f"{base_name}_psiblast.txt")
-    db = "VirulenceDatabase"  # Use the correct database name
+    db = sys.argv[1]  # Use the correct database name
 
     start_time = time.time()
     run_psiblast(proteome_file, db, psiblast_output, num_threads=num_threads)
@@ -118,8 +119,8 @@ def process_combined_proteome(proteome_file, output_dir, mmseqs_file, num_thread
 
 # Example usage
 if __name__ == "__main__":
-    proteome_file = sys.argv[1] # Path to the combined proteome file
-    output_dir =  sys.argv[2] # Directory to store PSI-BLAST results
-    mmseqs_file =  sys.argv[3] # Path to the MMseqs cluster file
+    proteome_file = sys.argv[2] # Path to the combined proteome file
+    output_dir =  sys.argv[3] # Directory to store PSI-BLAST results
+    mmseqs_file =  sys.argv[4] # Path to the MMseqs cluster file
 
     process_combined_proteome(proteome_file, output_dir, mmseqs_file, num_threads=8)
