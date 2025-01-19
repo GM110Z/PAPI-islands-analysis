@@ -85,6 +85,7 @@ else:
     
 #plot these
 # Load the data from the CSV file
+# Load the data from the CSV file
 df = pd.read_csv("overlap_results.csv", sep =",")
 # Create a scatter plot
 plt.figure(figsize=(10, 6))
@@ -100,4 +101,5 @@ plt.xticks(rotation=45)
 plt.legend(title='Pathogenicity Island 1')
 plt.grid()
 plt.tight_layout()
+plt.savefig("overlap_size_plot.pdf")  # Save as PDF
 plt.show()
