@@ -26,9 +26,9 @@
 
 **detective.py 	DETECT Ice oVErlap** : It compares files with jarvis coordinates for each pathogenicity islands and detects for overlap. It produces a table for coordinates and size of overlap and a scatter plot to summarise this
 
-**viper.py  – Virulence Identification and Protein Elimination via Refinement**: It needs a protein file, ideally produced through Mmseqs2 dereplication. It also needs the MMseqs2 table. WIll run PSI-BLAST using the representative proteins vs a database of your choice. 
+**viper.py  – Virulence Identification and Protein Elimination via Refinement**: It needs a protein file.  WIll run PSI-BLAST using the inputed proteome vs a database of your choice (e.g. VFDB). 
 *You have to make your own makeblastdb database and then can input the name as sys.argv[1]*
 *proteome_file = sys.argv[2]*
 *output_dir = sys.argv[3]*
-*mmseqs_file =  sys.argv[4]*
+
 
