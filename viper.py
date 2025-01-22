@@ -1,32 +1,10 @@
-#psiblast vs databases and combo with mmseqs clustering to avoid using replicate data in computation
 import os
 import subprocess
 import pandas as pd
-from Bio import SeqIO
 import time
 import sys
 
-# Step 1: MMseqs Clustering - Assign Numeric Cluster IDs
-def load_clustering_table(file_path):
-    return pd.read_csv(file_path, sep="\t", header=None, names=["ClusterRep", "Protein_ID"])
-
-def assign_numerical_ids(df):
-    unique_clusters = df['ClusterRep'].unique()
-    cluster_to_id = {cluster: idx + 1 for idx, cluster in enumerate(unique_clusters)}
-    df['ClusterRep'] = df['ClusterRep'].map(cluster_to_id)
-    return df, cluster_to_id
-
-def save_updated_table(df, file_path):
-    df.to_csv(file_path, sep="\t", index=False, header=False)
-
-def process_mmseqs_clusters(mmseqs_file, output_file):
-    """Process the MMseqs clustering file to generate a table with numeric cluster IDs."""
-    clustering_df = load_clustering_table(mmseqs_file)
-    updated_df, _ = assign_numerical_ids(clustering_df)
-    save_updated_table(updated_df, output_file)
-    print(f"MMseqs clustering table with numeric cluster IDs saved to {output_file}")
-
-# Step 2: PSI-BLAST Processing Functions
+# Step 1: PSI-BLAST Processing Functions
 def run_psiblast(query_file, db, output_file, evalue=0.01, num_threads=20):
     """Run PSI-BLAST for the given query against the database."""
     psiblast_cmd = [
@@ -69,29 +47,10 @@ def resolve_similar_hits(filtered_hits):
 
     return pd.DataFrame(resolved_hits)
 
-def add_mmseqs_clusters(filtered_results_file, mmseqs_file, output_file):
-    """Add MMseqs cluster information to the filtered PSI-BLAST results."""
-    print("Adding MMseqs cluster information...")
-
-    # Load filtered PSI-BLAST results and MMseqs cluster file
-    filtered_results = pd.read_csv(filtered_results_file, sep="\t")
-    mmseqs_clusters = pd.read_csv(mmseqs_file, sep="\t", names=["MMSEQ_CLUSTER","Protein_ID"])
-
-    # Merge on qseqid and Protein_ID
-    merged_results = filtered_results.merge(mmseqs_clusters, left_on="qseqid", right_on="Protein_ID", how="left")
-
-    # Save the final merged results
-    merged_results.to_csv(output_file, sep="\t", index=False)
-    print(f"MMseqs cluster information added. Results saved to {output_file}")
-
-# Step 3: Main Process
-def process_combined_proteome(proteome_file, output_dir, mmseqs_file, num_threads=20):
+# Step 2: Main Process
+def process_combined_proteome(proteome_file, output_dir, num_threads=20):
     """Process a combined proteome file against the VirulenceDatabase."""
     os.makedirs(output_dir, exist_ok=True)
-
-    # First, process the MMseqs clustering table to assign numeric IDs
-    mmseqs_clusternumb_file = os.path.join(output_dir, "MMseqs-clusternumb.tsv")
-    process_mmseqs_clusters(mmseqs_file, mmseqs_clusternumb_file)
 
     print(f"Processing {proteome_file}...")
 
@@ -114,13 +73,9 @@ def process_combined_proteome(proteome_file, output_dir, mmseqs_file, num_thread
     filtered_results_file = os.path.join(output_dir, f"{base_name}_filtered_results.txt")
     resolved_hits.to_csv(filtered_results_file, sep="\t", index=False)
 
-    final_output_with_clusters = os.path.join(output_dir, f"{base_name}_final_results_with_clusters.txt")
-    add_mmseqs_clusters(filtered_results_file, mmseqs_clusternumb_file, final_output_with_clusters)
-
 # Example usage
 if __name__ == "__main__":
-    proteome_file = sys.argv[2] # Path to the combined proteome file
-    output_dir =  sys.argv[3] # Directory to store PSI-BLAST results
-    mmseqs_file =  sys.argv[4] # Path to the MMseqs cluster file
+    proteome_file = sys.argv[2]  # Path to the combined proteome file
+    output_dir = sys.argv[3]  # Directory to store PSI-BLAST results
 
-    process_combined_proteome(proteome_file, output_dir, mmseqs_file, num_threads=8)
+    process_combined_proteome(proteome_file, output_dir, num_threads=8)
