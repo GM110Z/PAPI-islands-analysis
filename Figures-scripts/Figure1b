@@ -1,0 +1,35 @@
+#heatmap to plot vfdb t6ss and defence content of GI islands
+import pandas as pd
+import seaborn as sns
+import matplotlib.pyplot as plt
+
+# Load dataset (update filename accordingly)
+filename = "heatmap.txt"  # Replace with your actual filename
+df = pd.read_csv(filename, sep = "\t")
+
+# Ensure 'Conflict system' is treated as the index
+df.set_index('Conflict system', inplace=True)
+
+# Convert dataframe for heatmap
+df_melted = df.reset_index().melt(id_vars=['Conflict system'], var_name='Island', value_name='Value')
+
+# Pivot for heatmap format
+heatmap_data = df_melted.pivot(index='Conflict system', columns='Island', values='Value')
+
+# Handle missing or non-numeric values (optional cleanup)
+heatmap_data = heatmap_data.apply(pd.to_numeric, errors='coerce')
+
+# Create heatmap with vmax to cap extreme values
+plt.figure(figsize=(12, 6))
+sns.heatmap(heatmap_data, cmap="plasma", annot=True, fmt=".0f", linewidths=0.5, vmax=100)
+
+# Labels and title
+plt.title("Conflict System Distribution Across Islands")
+plt.ylabel("Conflict System")
+plt.xlabel("Islands")
+plt.xticks(rotation=90)
+plt.yticks(rotation=0)
+plt.savefig("plot.pdf", dpi=300, format="pdf", bbox_inches="tight")
+
+plt.show()
+
