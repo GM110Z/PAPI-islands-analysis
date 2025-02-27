@@ -1,3 +1,5 @@
+#phorific-final
+
 import sys
 from Bio import SeqIO
 import csv
@@ -34,13 +36,13 @@ def parse_combined_records():
     combined_files = SeqIO.parse("OutFile.gb", format="genbank")
     with open('prefiltered.txt', mode='w') as parsed_output:
         parsed_output = csv.writer(parsed_output, delimiter='\t', quotechar='"', quoting=csv.QUOTE_MINIMAL)
-        parsed_output.writerow(['locus_tag', 'product', 'molecule', 'start', 'end', 'strand'])
+        parsed_output.writerow(['Protein_ID', 'product', 'molecule', 'start', 'end', 'strand'])
         for rec in combined_files:
             contig = rec.id
             for feature in rec.features:
                 if feature.type == 'CDS':
                     try:
-                        protein_id = feature.qualifiers['locus_tag'][0].strip()  # Strip whitespace
+                        protein_id = feature.qualifiers['protein_id'][0].strip()  # Strip whitespace
                         product = feature.qualifiers['product'][0].strip() if 'product' in feature.qualifiers else 'Unknown'
                         print(protein_id, "\t", product, "\t", contig, "\t", feature.location.start, "\t", feature.location.end, "\t", feature.location.strand, "\n", file=open('prefiltered.txt', 'a'))
                     except KeyError:
@@ -76,12 +78,12 @@ def load_genomic_coordinates(filename):
         reader = csv.DictReader(file, delimiter="\t")
         for row in reader:
             # Strip whitespace from Protein_ID
-            protein_id = row['locus_tag'].strip()
+            protein_id = row['Protein_ID'].strip()
             # Ensure that start and end are valid integers
             if row['start'] and row['end'] and pd.notna(row['start']) and pd.notna(row['end']):
                 try:
-                    start = int(row['start'])
-                    end = int(row['end'])
+                    start = int(float(row['start']))
+                    end = int(float(row['end']))
                 except ValueError:
                     print(f"Skipping row due to invalid start or end values: {row}")
                     continue
@@ -203,4 +205,10 @@ if __name__ == "__main__":
 # Cleanup temporary files
 os.system("rm OutFile.gb") 
 os.system("rm prefiltered.txt")
+
+
+
+#if you are using prokka assemblies and need to use locus tag instead of protein id, add the below change
+# protein_id = feature.qualifiers['locus_tag'][0].strip()
+
 
