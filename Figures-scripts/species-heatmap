@@ -1,0 +1,97 @@
+#plots a heatmap for abundance of hotspots in different species. Selects only species in which at least one hotspot  appear at least 100 times. 
+import pandas as pd
+import seaborn as sns
+import matplotlib.pyplot as plt
+import numpy as np
+import matplotlib.colors as mcolors
+
+# Load and clean data (replace NaNs with 0)
+def load_and_clean_hotspot(file, hotspot_name):
+    df = pd.read_csv(file, sep="\t", header=None)
+    df.columns = ['species', hotspot_name]
+    df[hotspot_name] = df[hotspot_name].fillna(0).astype(int)  # Replace NaNs with 0
+    return df
+
+# File paths for the three hotspot files
+file1 = "ho1.txt"
+file2 = "hot2.txt"
+file3 = "hot3.txt"
+
+# Load each file
+df1 = load_and_clean_hotspot(file1, "Hotspot1")
+df2 = load_and_clean_hotspot(file2, "Hotspot2")
+df3 = load_and_clean_hotspot(file3, "Hotspot3")
+
+# Merge on species name
+df_all = pd.merge(df1, df2, on="species", how="outer")
+df_all = pd.merge(df_all, df3, on="species", how="outer")
+df_all.set_index("species", inplace=True)
+
+# Filter species:
+# 1. Have at least one count >= 100 in any hotspot
+# 2. Not have all values equal to 0
+df_filtered = df_all[(df_all >= 100).any(axis=1) & (df_all.sum(axis=1) > 0)]
+
+# Replace NaNs with 0 explicitly after filtering
+df_filtered = df_filtered.fillna(0)
+
+# Apply custom normalization to treat values between 10k and 35k as outliers
+def custom_normalization(df):
+    df_normalized = df.copy()
+    # Normalize values between 10k and 35k to 20k
+    for col in df.columns:
+        df_normalized[col] = df[col].apply(lambda x: 20000 if 10000 <= x <= 35000 else x)
+    return df_normalized
+
+df_normalized = custom_normalization(df_filtered)
+
+# Print the normalized dataframe to verify changes
+print(df_normalized)
+
+# Create the heatmap with customized scaling and cmap
+plt.figure(figsize=(12, 8))
+
+# Define colormap
+cmap = sns.color_palette("PuBuGn", as_cmap=True)
+
+# Create a custom colormap for outliers (values between 10k and 35k)
+outlier_cmap = sns.color_palette("viridis", as_cmap=True)  # You can change this to any color palette you prefer
+
+# Create mask for outliers (values between 10k and 35k)
+mask_outliers = df_normalized.applymap(lambda x: 10000 <= x <= 35000)
+
+# Plotting heatmap for values not in the 10k-35k range
+sns.heatmap(
+    df_normalized,
+    cmap=cmap,
+    linewidths=1.5,
+    linecolor='gray',
+    cbar_kws={'label': 'Hotspot Value'},
+    annot=False,
+    fmt='d',
+    mask=mask_outliers,  # Mask out the outliers
+    square=True  # Ensures square heatmap
+)
+
+# Plotting heatmap for outliers (values between 10k and 35k) using a different color palette
+sns.heatmap(
+    df_normalized,
+    cmap=outlier_cmap,
+    mask=~mask_outliers,  # Mask out the values not in the 10k-35k range
+    annot=False,
+    fmt='d',
+    cbar=False,  # No color bar for outliers
+    linewidths=0.5,
+    linecolor='black',
+    square=True  # Ensures square heatmap
+)
+
+# Adjust axis labels and title
+plt.title('Heatmap of Hotspot Presence in Different Species', fontsize=16)
+plt.xticks(rotation=45, ha="right", fontsize=10)
+plt.yticks(fontsize=9)
+
+# Show the plot
+plt.tight_layout()
+# Save in high-quality formats
+plt.savefig("PAPI1-species
