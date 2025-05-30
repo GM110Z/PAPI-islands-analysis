@@ -32,3 +32,4 @@
 *output_dir = sys.argv[3]*
 
 
+**icarus.py** -  runs cblaster in batch using boundareis from different islands. 
