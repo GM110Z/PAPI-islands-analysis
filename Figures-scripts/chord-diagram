@@ -1,0 +1,67 @@
+library(circlize)
+
+# --- Load and clean similarity matrix ---
+mat <- read.table("proteome_similarity_matrix.tsv", header = TRUE, sep = "\t", row.names = 1)
+mat <- as.matrix(mat)
+diag(mat) <- 0
+mat[is.na(mat)] <- 0
+
+# --- Filter: keep only mutual similarity > 0.5 ---
+mat_filtered <- matrix(0, nrow = nrow(mat), ncol = ncol(mat), dimnames = dimnames(mat))
+for (i in 1:nrow(mat)) {
+  for (j in 1:ncol(mat)) {
+    if (i != j && mat[i, j] >= 0.5 && mat[j, i] >= 0.5) {
+      mat_filtered[i, j] <- mat[i, j]
+    }
+  }
+}
+
+# --- PDF Output ---
+pdf("chord_diagram_filtered.pdf", width = 10, height = 10)
+
+# --- Circos settings ---
+circos.clear()
+circos.par(start.degree = 90, gap.degree = 4, track.margin = c(0.01, 0.01))
+
+# --- Plot chord diagram ---
+chordDiagram(
+  mat_filtered,
+  transparency = 0.5,
+  annotationTrack = "grid",
+  preAllocateTracks = list(track.height = 0.1)
+)
+
+# --- Rotated labels, positioned closer to circle ---
+circos.trackPlotRegion(
+  track.index = 1,
+  panel.fun = function(x, y) {
+    sector.name <- get.cell.meta.data("sector.index")
+    xlim <- get.cell.meta.data("xlim")
+    ylim <- get.cell.meta.data("ylim")
+    circos.text(
+      x = mean(xlim),
+      y = ylim[1] + 0.3,
+      labels = sector.name,
+      facing = "clockwise",
+      niceFacing = FALSE,
+      adj = c(0, 0),
+      cex = 0.7
+    )
+  },
+  bg.border = NA
+)
+
+# --- Add explanatory legend (ASCII only) ---
+legend(
+  "topleft",
+  legend = c(
+    "Chord width ~ similarity score",
+    "Only mutual similarity ≥ 0.5 shown"
+  ),
+  bty = "n",
+  cex = 0.9,
+  text.col = "black"
+)
+
+# --- Save PDF ---
+dev.off()
