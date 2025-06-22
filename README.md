@@ -1,3 +1,9 @@
+**GiCoPlot.py** = Stands for Genomic Island Co-occurrence Plotter. runs as below
+
+GiCoPlot.py <your_working_directory> -o name_of_presence_absence_matrix.csv
+
+Additionally produces an upset plot of the top 100 combos of islands, a bar chart showing how many genomes encode a single island, a tandem, 3 islands, etc. Also producesa a table providing all the island combos found in all analysed genomes. For input it needs separate files for each island with the following headers (nuccore_id/AssemblyID/Start/Stop/Size)
+
 **Heatmap-generator** = Uses PADLOC or AMRFinder outputs to generate heatmaps of presence/absence that can be then used in R
 
 **jarvis.py** = Filters blast ouput to produce a table of regions with start and stop that can be fed to efetch. It solves the problem of local alignments by separating regions that are more than a certain distance (i.e. 180k for PAPi-1). It then calculate and groups regions by size intervals
