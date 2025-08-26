@@ -39,3 +39,6 @@ Additionally produces an upset plot of the top 100 combos of islands, a bar char
 
 
 **icarus.py** -  runs cblaster in batch using boundareis from different islands. 
+
+**nuccore_to_assembly.sh** fetches GCF_xxx assembly for a list of nuccore ids. 
+runs as : nuccore_to_assembly.sh <nuccore-list.txt> <name-of-converted-unix.txt> <name-of-temp-output.txt> <jarvis-output.txt> <final-file-name.txt>
