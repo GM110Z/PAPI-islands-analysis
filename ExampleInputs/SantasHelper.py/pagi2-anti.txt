@@ -1,0 +1,2 @@
+sys_id	type	subtype	activity	sys_beg	sys_end	protein_in_syst	genes_count	name_of_profiles_in_sys
+NZ_CP039990.1_5326410_5333367_Aca_alone_1	Anti_CRISPR	Aca_alone	Antidefense	WP_071537767.1	WP_071537767.1	WP_071537767.1	1	aca1
