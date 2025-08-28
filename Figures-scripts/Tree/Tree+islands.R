@@ -1,4 +1,4 @@
-tree_file    <- "New-tree-I-Hope.nwk"   # Newick with GCF_/GCA_ tip labels
+tree_file    <- "tree.nwk"   # Newick with GCF_/GCA_ tip labels
 matrix_file  <- "presence.tsv"        # TSV/CSV: first col = genome ID; others = 0/1
 drop_version <- FALSE                 # TRUE if IDs look like GCF_XXXXXX (no ".1")
 
@@ -10,10 +10,9 @@ radius_scale      <- 1.0    # >1 stretches tree radially (e.g., 1.5 or 2.0)
 ring_offset       <- 0.0005 # tiny gap from leaf tips to ring (smaller = closer)
 ring_width        <- 0.75   # ring thickness
 ring_absent_grey  <- "#E8EDF5" # 0's
-ring_present_blue <- "#0000FF" # 1's
-colname_angle     <- -7     # rotate dataset headers
-colname_size      <- 2  # header size
-colname_push_out  <- 10   # push headers outward from ring
+colname_angle     <- -7     # rotate dataset headers (unused now; we hide colnames)
+colname_size      <- 2      # header size (unused now)
+colname_push_out  <- 10     # push headers outward from ring (unused now)
 
 # ===== Packages =====
 suppressPackageStartupMessages({
@@ -58,20 +57,33 @@ tip_df <- tibble(gcf = tr$tip.label)
 mat2 <- left_join(tip_df, mat, by = "gcf")
 mat2[value_cols] <- lapply(mat2[value_cols], function(v){ v[is.na(v)] <- 0L; v })
 
-# order dataset columns by prevalence
+# Order columns by prevalence
 heat <- as.data.frame(mat2[value_cols], stringsAsFactors = FALSE)
 rownames(heat) <- mat2$gcf
 prev <- colSums(heat, na.rm = TRUE)
 heat <- heat[, order(prev, decreasing = TRUE), drop = FALSE]
-heat_disc <- as.data.frame(lapply(heat, function(v) factor(ifelse(v > 0, "1", "0"), levels = c("0","1"))))
-rownames(heat_disc) <- rownames(heat)
+
+# === Option A: one color per island (present), single grey for absent ===
+# Build a key matrix: "0" for absent; "<island_name>" for present
+heat_key <- heat
+for (j in seq_along(heat_key)) {
+  nm <- colnames(heat_key)[j]
+  heat_key[[j]] <- ifelse(heat_key[[j]] > 0, nm, "0")
+}
+# Ensure consistent levels across columns (so legend shows all islands)
+heat_key[] <- lapply(heat_key, factor, levels = c("0", colnames(heat_key)))
+
+# Color palette: one color per island + grey for "absent"
+present_pal <- setNames(grDevices::hcl.colors(n = ncol(heat_key), palette = "Spectral"),
+                        colnames(heat_key))
+fill_vals <- c("0" = ring_absent_grey, present_pal)
 
 # ===== Base circular tree WITH FORCED OPENING =====
 p <- ggtree(tr, layout = "circular", size = tree_line_size)
-p <- open_tree(p, open_angle)       # <-- force the wedge opening, works on all ggtree
-p <- rotate_tree(p, rotate_degrees) # position the opening
+p <- open_tree(p, open_angle)
+p <- rotate_tree(p, rotate_degrees)
 
-# clean canvas
+# Clean canvas
 p <- p + theme_void() +
   theme(
     plot.margin      = margin(8, 8, 8, 8),
@@ -80,31 +92,30 @@ p <- p + theme_void() +
     legend.position  = "right"
   )
 
-# ===== Tight ring (respects the opening) =====
+# ===== Tight ring (no column headers; legend carries names) =====
 p <- tryCatch(
   gheatmap(
-    p, heat_disc,
+    p, heat_key,
     offset = ring_offset,
     width  = ring_width,
-    colnames = TRUE,
-    colnames_position = "top",
-    colnames_angle = colname_angle,
-    colnames_offset_y = colname_push_out,
-    font.size = colname_size,
-    hjust = 1,                 # <- right-align column labels
+    colnames = FALSE,   # <-- hide ring labels; legend only
     color = NA
   ),
   error = function(e) {
     gheatmap(
-      p, heat_disc,
+      p, heat_key,
       offset = ring_offset, width = ring_width,
-      colnames = TRUE, colnames_position = "top",
-      font.size = colname_size, hjust = 1, color = NA  # <- right-align here too
-    ) + theme(axis.text.x = element_text(angle = colname_angle, vjust = 0.5, hjust = 1))
+      colnames = FALSE,
+      color = NA
+    )
   }
-) + scale_fill_manual(values = c("0" = ring_absent_grey, "1" = ring_present_blue),
-                      na.value = "white", name = "Presence")
+) + scale_fill_manual(
+  values = fill_vals,
+  name   = "Island (present)",
+  breaks = colnames(heat_key)  # exclude "0" so legend shows only islands
+  # To include "Absent", use: breaks = c("0", colnames(heat_key))
+)
 
 # ===== Save =====
-ggsave("papi_tree_OPEN_forced_TIGHT_lightGreyRing_SUPERblue.pdf", p,
+ggsave("papi_tree_OPEN_forced_TIGHT_multicolorLegendBerlin.pdf", p,
        width = 18, height = 18, units = "in", limitsize = FALSE)
