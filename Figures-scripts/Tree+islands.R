@@ -11,9 +11,9 @@ ring_offset       <- 0.0005 # tiny gap from leaf tips to ring (smaller = closer)
 ring_width        <- 0.75   # ring thickness
 ring_absent_grey  <- "#E8EDF5" # 0's
 ring_present_blue <- "#0000FF" # 1's
-colname_angle     <- -5     # rotate dataset headers
+colname_angle     <- -7     # rotate dataset headers
 colname_size      <- 2  # header size
-colname_push_out  <- 30   # push headers outward from ring
+colname_push_out  <- 10   # push headers outward from ring
 
 # ===== Packages =====
 suppressPackageStartupMessages({
@@ -88,10 +88,10 @@ p <- tryCatch(
     width  = ring_width,
     colnames = TRUE,
     colnames_position = "top",
-      colnames_angle = colname_angle,
+    colnames_angle = colname_angle,
     colnames_offset_y = colname_push_out,
     font.size = colname_size,
-    hjust = 0.5,
+    hjust = 1,                 # <- right-align column labels
     color = NA
   ),
   error = function(e) {
@@ -99,8 +99,8 @@ p <- tryCatch(
       p, heat_disc,
       offset = ring_offset, width = ring_width,
       colnames = TRUE, colnames_position = "top",
-      font.size = colname_size, hjust = 0.5, color = NA
-    ) + theme(axis.text.x = element_text(angle = colname_angle, vjust = 0.5, hjust = 0))
+      font.size = colname_size, hjust = 1, color = NA  # <- right-align here too
+    ) + theme(axis.text.x = element_text(angle = colname_angle, vjust = 0.5, hjust = 1))
   }
 ) + scale_fill_manual(values = c("0" = ring_absent_grey, "1" = ring_present_blue),
                       na.value = "white", name = "Presence")
