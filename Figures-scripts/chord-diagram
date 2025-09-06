@@ -6,12 +6,17 @@ mat <- as.matrix(mat)
 diag(mat) <- 0
 mat[is.na(mat)] <- 0
 
-# --- Filter: keep only mutual similarity > 0.5 ---
+# --- Filter: keep only similarity >= 0.30 (no reciprocity; draw once per pair) ---
+thr <- 0.40
 mat_filtered <- matrix(0, nrow = nrow(mat), ncol = ncol(mat), dimnames = dimnames(mat))
-for (i in 1:nrow(mat)) {
-  for (j in 1:ncol(mat)) {
-    if (i != j && mat[i, j] >= 0.5 && mat[j, i] >= 0.5) {
-      mat_filtered[i, j] <- mat[i, j]
+
+if (nrow(mat) >= 2) {
+  for (i in seq_len(nrow(mat) - 1)) {                     # safe upper-triangle loop
+    for (j in seq.int(i + 1, ncol(mat))) {
+      w <- max(mat[i, j], mat[j, i])                      # take stronger direction
+      if (!is.na(w) && w >= thr) {
+        mat_filtered[i, j] <- w                           # keep only i->j; j->i stays 0
+      }
     }
   }
 }
@@ -51,17 +56,8 @@ circos.trackPlotRegion(
   bg.border = NA
 )
 
-# --- Add explanatory legend (ASCII only) ---
+# --- Legend (threshold updated) ---
 legend(
   "topleft",
   legend = c(
-    "Chord width ~ similarity score",
-    "Only mutual similarity ≥ 0.5 shown"
-  ),
-  bty = "n",
-  cex = 0.9,
-  text.col = "black"
-)
-
-# --- Save PDF ---
-dev.off()
+ 
