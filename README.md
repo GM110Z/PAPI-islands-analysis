@@ -1,6 +1,6 @@
 **GiCoPlot.py** = Stands for Genomic Island Co-occurrence Plotter. runs as below
 
-GiCoPlot.py <your_working_directory> -o name_of_presence_absence_matrix.csv
+python GiCoPlot.py presence-absence-matrix.tsv --top-n 100 --drop-version
 
 Additionally produces an upset plot of the top 100 combos of islands, a bar chart showing how many genomes encode a single island, a tandem, 3 islands, etc. Also producesa a table providing all the island combos found in all analysed genomes. For input it needs separate files for each island with the following headers (nuccore_id/AssemblyID/Start/Stop/Size)
 
