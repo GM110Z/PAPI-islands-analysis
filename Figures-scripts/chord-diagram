@@ -60,4 +60,13 @@ circos.trackPlotRegion(
 legend(
   "topleft",
   legend = c(
- 
+    "Chord width ~ similarity score",
+    "Only similarity >= 0.40 shown"
+  ),
+  bty = "n",
+  cex = 0.9,
+  text.col = "black"
+)
+
+# --- Save PDF ---
+dev.off()
